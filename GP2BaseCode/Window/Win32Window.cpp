@@ -15,7 +15,7 @@ LRESULT CALLBACK StaticWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 CWin32Window::CWin32Window(void)
 {
-	//again part of the track - BMD
+	//again part of the trick - BMD
 	g_pWindow=this;
 }
 

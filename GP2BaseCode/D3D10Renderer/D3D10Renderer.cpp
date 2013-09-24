@@ -1,5 +1,8 @@
 #include "D3D10Renderer.h"
 
+#include "BasicEffect.h"
+#include "D3D10Effect.h"
+
 #include <D3D10.h>
 #include <D3DX10.h>
 
@@ -10,12 +13,18 @@ D3D10Renderer::D3D10Renderer()
 	m_pSwapChain=NULL;
 	m_pDepthStencelView=NULL;
 	m_pDepthStencilTexture=NULL;
+	m_pDefaultEffect=NULL;
 }
 
 D3D10Renderer::~D3D10Renderer()
 {
 	if (m_pD3D10Device)
 		m_pD3D10Device->ClearState();
+	if (m_pDefaultEffect)
+	{
+		delete m_pDefaultEffect;
+		m_pDefaultEffect=NULL;
+	}
 
 	if (m_pRenderTargetView)
 		m_pRenderTargetView->Release();
@@ -42,6 +51,8 @@ bool D3D10Renderer::init(void *pWindowHandle,bool fullScreen)
 		return false;
 	if (!createInitialRenderTarget(width,height))
 		return false;
+
+	m_pDefaultEffect=loadEffectFromMemory(basicEffect);
 
 	return true;
 }
@@ -160,4 +171,20 @@ void D3D10Renderer::present()
 	//Swaps the buffers in the chain, the back buffer to the front(screen)
 	//http://msdn.microsoft.com/en-us/library/bb174576%28v=vs.85%29.aspx - BMD
     m_pSwapChain->Present( 0, 0 );
+}
+
+IEffect * D3D10Renderer::loadEffectFromFile(const wstring& name)
+{
+	D3D10Effect *pEffect=new D3D10Effect();
+	pEffect->loadFromFile(name,m_pD3D10Device);
+
+	return pEffect;
+}
+
+IEffect * D3D10Renderer::loadEffectFromMemory(const char* mem)
+{
+	D3D10Effect *pEffect=new D3D10Effect();
+	pEffect->loadFromMemory(mem,m_pD3D10Device);
+
+	return pEffect;
 }

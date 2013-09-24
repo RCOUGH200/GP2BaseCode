@@ -79,9 +79,12 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BasicEffect.h" />
+    <ClInclude Include="D3D10Effect.h" />
     <ClInclude Include="D3D10Renderer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="D3D10Effect.cpp" />
     <ClCompile Include="D3D10Renderer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

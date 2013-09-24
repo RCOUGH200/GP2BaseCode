@@ -22,6 +22,9 @@ public:
 	bool init(void *pWindowHandle,bool fullScreen);
 	void clear(float r,float g,float b,float a);
 	void present();
+
+	IEffect * loadEffectFromFile(const wstring& name);
+	IEffect * loadEffectFromMemory(const char* mem);
 private:
 	bool createDevice(HWND pWindowHandle,int windowWidth, int windowHeight,
 bool fullScreen);
@@ -33,4 +36,6 @@ private:
 	ID3D10RenderTargetView * m_pRenderTargetView;
 	ID3D10DepthStencilView * m_pDepthStencelView;
 	ID3D10Texture2D *m_pDepthStencilTexture;
+
+	IEffect *m_pDefaultEffect;
 };
