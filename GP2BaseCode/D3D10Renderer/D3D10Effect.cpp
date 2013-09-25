@@ -1,4 +1,5 @@
 #include "D3D10Effect.h"
+#include "BasicEffect.h"
 #include <D3D10.h>
 #include <D3DX10.h>
 
@@ -66,8 +67,8 @@ bool D3D10Effect::loadFromMemory(const char * mem,ID3D10Device *pDevice)
 
 	ID3D10Blob * pErrorBuffer=NULL;
 	if (FAILED(D3DX10CreateEffectFromMemory(mem,
-		strlen(mem),
-		"DefaultEffect",
+		strlen(mem)+1,
+		NULL,
 		NULL,
 		NULL,
 		"fx_4_0", //A string which specfies the effect profile to use, in this case fx_4_0(Shader model 4) - BMD
