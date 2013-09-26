@@ -15,6 +15,11 @@ public:
 
 	bool loadFromFile(const wstring& filename,ID3D10Device *pDevice);
 	bool loadFromMemory(const char * mem,ID3D10Device *pDevice);
+
+	const ID3D10Effect * getD3D10Effect()
+	{
+		return m_pEffect;
+	};
 private:
 	ID3D10Effect*           m_pEffect;
 	ID3D10EffectTechnique*  m_pActiveTechnique;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "Buffers.h"
 
 using namespace std;
 
@@ -17,4 +18,6 @@ public:
 
 	virtual IEffect * loadEffectFromFile(const wstring& name)=0;
 	virtual IEffect * loadEffectFromMemory(const char* mem)=0;
+
+	virtual IBuffer * createBuffer(unsigned int bufferSize, BUFFER_TYPE type,BUFFER_USAGE usage,void **pData)=0;
 };

@@ -80,10 +80,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BasicEffect.h" />
+    <ClInclude Include="D3D10Buffer.h" />
     <ClInclude Include="D3D10Effect.h" />
     <ClInclude Include="D3D10Renderer.h" />
+    <ClInclude Include="VertexLayouts.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="D3D10Buffer.cpp" />
     <ClCompile Include="D3D10Effect.cpp" />
     <ClCompile Include="D3D10Renderer.cpp" />
   </ItemGroup>

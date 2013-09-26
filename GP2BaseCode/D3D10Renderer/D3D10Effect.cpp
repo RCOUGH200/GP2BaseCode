@@ -47,7 +47,6 @@ bool D3D10Effect::loadFromFile(const wstring& filename,ID3D10Device *pDevice)
 		&pErrorBuffer, //ID3D10Blob**, a pointer to a memory address of a blob object, this can be used to hold errors from the compilation - BMD
 		NULL )))//HRESULT*, a pointer to a the result of the compilation, this will be NULL - BMD
 	{
-		//If the creation of the Effect fails then a message box will be shown
 		OutputDebugStringA((char*)pErrorBuffer->GetBufferPointer());
 		return false;
     }
@@ -81,7 +80,6 @@ bool D3D10Effect::loadFromMemory(const char * mem,ID3D10Device *pDevice)
 		&pErrorBuffer, //ID3D10Blob**, a pointer to a memory address of a blob object, this can be used to hold errors from the compilation - BMD
 		NULL )))//HRESULT*, a pointer to a the result of the compilation, this will be NULL - BMD
 	{
-		//If the creation of the Effect fails then a message box will be shown
 		OutputDebugStringA((char*)pErrorBuffer->GetBufferPointer());
 		return false;
 	}

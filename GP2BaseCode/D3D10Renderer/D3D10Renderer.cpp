@@ -2,6 +2,7 @@
 
 #include "BasicEffect.h"
 #include "D3D10Effect.h"
+#include "D3D10Buffer.h"
 
 #include <D3D10.h>
 #include <D3DX10.h>
@@ -14,6 +15,7 @@ D3D10Renderer::D3D10Renderer()
 	m_pDepthStencelView=NULL;
 	m_pDepthStencilTexture=NULL;
 	m_pDefaultEffect=NULL;
+	m_pVertexLayout=NULL;
 }
 
 D3D10Renderer::~D3D10Renderer()
@@ -26,6 +28,8 @@ D3D10Renderer::~D3D10Renderer()
 		m_pDefaultEffect=NULL;
 	}
 
+	if (m_pVertexLayout)
+		m_pVertexLayout->Release();
 	if (m_pRenderTargetView)
 		m_pRenderTargetView->Release();
 	if (m_pDepthStencelView)
@@ -52,7 +56,9 @@ bool D3D10Renderer::init(void *pWindowHandle,bool fullScreen)
 	if (!createInitialRenderTarget(width,height))
 		return false;
 
+	//Load Effect
 	m_pDefaultEffect=loadEffectFromMemory(basicEffect);
+	//Create Vertex Layout
 
 	return true;
 }
@@ -71,15 +77,15 @@ bool D3D10Renderer::createDevice(HWND window,int windowWidth, int windowHeight,b
 		sd.BufferCount = 2;
 	else 
 		sd.BufferCount=1;
-	sd.OutputWindow = window;
-	sd.Windowed = (BOOL)(!fullScreen);
-       sd.SampleDesc.Count = 1;
-       sd.SampleDesc.Quality = 0;
-       sd.BufferDesc.Width = windowWidth;
-       sd.BufferDesc.Height = windowHeight;
-       sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-       sd.BufferDesc.RefreshRate.Numerator = 60;
-       sd.BufferDesc.RefreshRate.Denominator = 1;
+		sd.OutputWindow = window;
+		sd.Windowed = (BOOL)(!fullScreen);
+		sd.SampleDesc.Count = 1;
+		sd.SampleDesc.Quality = 0;
+		sd.BufferDesc.Width = windowWidth;
+		sd.BufferDesc.Height = windowHeight;
+		sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		sd.BufferDesc.RefreshRate.Numerator = 60;
+		sd.BufferDesc.RefreshRate.Denominator = 1;
 
 	if (FAILED(D3D10CreateDeviceAndSwapChain(NULL, 
 		D3D10_DRIVER_TYPE_HARDWARE,
@@ -154,6 +160,11 @@ bool D3D10Renderer::createInitialRenderTarget(int windowWidth, int windowHeight)
 	return true;
 }
 
+bool D3D10Renderer::createDefaultVertexLayout()
+{
+	
+	return true;
+}
 
 void D3D10Renderer::clear(float r,float g,float b,float a)
 {
@@ -187,4 +198,13 @@ IEffect * D3D10Renderer::loadEffectFromMemory(const char* mem)
 	pEffect->loadFromMemory(mem,m_pD3D10Device);
 
 	return pEffect;
+}
+
+IBuffer * D3D10Renderer::createBuffer(unsigned int bufferSize, BUFFER_TYPE type,BUFFER_USAGE usage,void **pData)
+{
+	IBuffer *pBuffer=new D3D10Buffer(m_pD3D10Device);
+
+	pBuffer->createBuffer(bufferSize,VERTEX_BUFFER,DEFAULT,pData);
+
+	return pBuffer;
 }
