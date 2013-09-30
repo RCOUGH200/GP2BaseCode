@@ -75,6 +75,7 @@
     <ClInclude Include="Buffers.h" />
     <ClInclude Include="Effect.h" />
     <ClInclude Include="Renderer.h" />
+    <ClInclude Include="Technique.h" />
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

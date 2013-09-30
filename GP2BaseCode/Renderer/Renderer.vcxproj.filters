@@ -30,5 +30,8 @@
     <ClInclude Include="Buffers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Technique.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,13 +1,13 @@
 #include "D3D10Effect.h"
+#include "D3D10Technique.h"
 #include "BasicEffect.h"
 #include <D3D10.h>
 #include <D3DX10.h>
 
-D3D10Effect::D3D10Effect()
+D3D10Effect::D3D10Effect(ID3D10Device *pDevice)
 {
 	m_pEffect=NULL;
-	m_pActiveTechnique=NULL;
-	m_pCurrentPass=NULL;
+	m_pD3D10Device=NULL;
 }
 
 D3D10Effect::~D3D10Effect()
@@ -20,7 +20,18 @@ D3D10Effect::~D3D10Effect()
 	}
 }
 
-bool D3D10Effect::loadFromFile(const wstring& filename,ID3D10Device *pDevice)
+ITechnique * D3D10Effect::getTechnique(const string& techniqueName)
+{
+	ID3D10EffectTechnique *pD3D10Technique=m_pEffect->GetTechniqueByName(techniqueName.c_str());
+	if (pD3D10Technique){
+		ITechnique * pTechnique=new D3D10Technique(pD3D10Technique);
+		return pTechnique;
+	}
+
+	return NULL;
+}
+
+bool D3D10Effect::loadFromFile(const wstring& filename)
 {
 	DWORD dwShaderFlags = D3D10_SHADER_ENABLE_STRICTNESS;
 #if defined( DEBUG ) || defined( _DEBUG )
@@ -40,7 +51,7 @@ bool D3D10Effect::loadFromFile(const wstring& filename,ID3D10Device *pDevice)
 		"fx_4_0", //A string which specfies the effect profile to use, in this case fx_4_0(Shader model 4) - BMD
 		dwShaderFlags, //Shader flags, this can be used to add extra debug information to the shader - BMD
 		0,//Fx flags, effect compile flags set to zero - BMD
-        pDevice, //ID3D10Device*, the direct3D rendering device - BMD
+		m_pD3D10Device, //ID3D10Device*, the direct3D rendering device - BMD
 		NULL, //ID3D10EffectPool*, a pointer to an effect pool allows sharing of variables between effects - BMD
 		NULL, //ID3DX10ThreadPump*, a pointer to a thread pump this allows multithread access to shader resource - BMD
 		&m_pEffect, //ID3D10Effect**, a pointer to a memory address of the effect object. This will be initialised after this - BMD
@@ -53,7 +64,7 @@ bool D3D10Effect::loadFromFile(const wstring& filename,ID3D10Device *pDevice)
 	return true;
 }
 
-bool D3D10Effect::loadFromMemory(const char * mem,ID3D10Device *pDevice)
+bool D3D10Effect::loadFromMemory(const char * mem)
 {
 	DWORD dwShaderFlags = D3D10_SHADER_ENABLE_STRICTNESS;
 #if defined( DEBUG ) || defined( _DEBUG )
@@ -66,14 +77,14 @@ bool D3D10Effect::loadFromMemory(const char * mem,ID3D10Device *pDevice)
 
 	ID3D10Blob * pErrorBuffer=NULL;
 	if (FAILED(D3DX10CreateEffectFromMemory(mem,
-		strlen(mem)+1,
+		strlen(mem),
 		NULL,
 		NULL,
 		NULL,
 		"fx_4_0", //A string which specfies the effect profile to use, in this case fx_4_0(Shader model 4) - BMD
 		dwShaderFlags, //Shader flags, this can be used to add extra debug information to the shader - BMD
 		0,//Fx flags, effect compile flags set to zero - BMD
-        pDevice, //ID3D10Device*, the direct3D rendering device - BMD
+        m_pD3D10Device, //ID3D10Device*, the direct3D rendering device - BMD
 		NULL, //ID3D10EffectPool*, a pointer to an effect pool allows sharing of variables between effects - BMD
 		NULL, //ID3DX10ThreadPump*, a pointer to a thread pump this allows multithread access to shader resource - BMD
 		&m_pEffect, //ID3D10Effect**, a pointer to a memory address of the effect object. This will be initialised after this - BMD

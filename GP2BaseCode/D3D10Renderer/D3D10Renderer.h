@@ -42,6 +42,6 @@ private:
 	ID3D10Texture2D *m_pDepthStencilTexture;
 
 	IEffect *m_pDefaultEffect;
-	//Vertex Layout
-	ID3D10InputLayout*      m_pVertexLayout;
+	//Vertex Layout, we will replace this later
+	ID3D10InputLayout*      m_pDefaultVertexLayout;
 };

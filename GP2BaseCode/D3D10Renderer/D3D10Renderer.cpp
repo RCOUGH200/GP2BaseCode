@@ -4,6 +4,8 @@
 #include "D3D10Effect.h"
 #include "D3D10Buffer.h"
 
+#include "VertexLayouts.h"
+
 #include <D3D10.h>
 #include <D3DX10.h>
 
@@ -15,7 +17,7 @@ D3D10Renderer::D3D10Renderer()
 	m_pDepthStencelView=NULL;
 	m_pDepthStencilTexture=NULL;
 	m_pDefaultEffect=NULL;
-	m_pVertexLayout=NULL;
+	m_pDefaultVertexLayout=NULL;
 }
 
 D3D10Renderer::~D3D10Renderer()
@@ -28,8 +30,8 @@ D3D10Renderer::~D3D10Renderer()
 		m_pDefaultEffect=NULL;
 	}
 
-	if (m_pVertexLayout)
-		m_pVertexLayout->Release();
+	if (m_pDefaultVertexLayout)
+		m_pDefaultVertexLayout->Release();
 	if (m_pRenderTargetView)
 		m_pRenderTargetView->Release();
 	if (m_pDepthStencelView)
@@ -162,7 +164,22 @@ bool D3D10Renderer::createInitialRenderTarget(int windowWidth, int windowHeight)
 
 bool D3D10Renderer::createDefaultVertexLayout()
 {
-	
+	//Number of elements in the layout - BMD
+    UINT numElements = sizeof( SimpleVerexLayout ) / sizeof(D3D10_INPUT_ELEMENT_DESC);
+	//We will replace this will a more robust technique later
+	ID3D10EffectTechnique*  m_pTechnique=((D3D10Effect*)m_pDefaultEffect)->getD3D10Effect()->GetTechniqueByName("Render");
+	//Get the Pass description, we need this to bind the vertex to the pipeline - BMD
+    D3D10_PASS_DESC PassDesc;
+    m_pTechnique->GetPassByIndex( 0 )->GetDesc( &PassDesc );
+	//Create Input layout to describe the incoming buffer to the input assembler - BMD
+    if (FAILED(m_pD3D10Device->CreateInputLayout( SimpleVerexLayout, //The layout describing our vertices - BMD
+		numElements, //The number of elements in the layout
+		PassDesc.pIAInputSignature,//Input signature of the description of the pass - BMD
+        PassDesc.IAInputSignatureSize, //The size of this Signature size of the pass - BMD
+		&m_pDefaultVertexLayout ))) //The pointer to an address of Vertex Layout - BMD
+	{
+		return false;
+	}
 	return true;
 }
 
@@ -186,16 +203,16 @@ void D3D10Renderer::present()
 
 IEffect * D3D10Renderer::loadEffectFromFile(const wstring& name)
 {
-	D3D10Effect *pEffect=new D3D10Effect();
-	pEffect->loadFromFile(name,m_pD3D10Device);
+	D3D10Effect *pEffect=new D3D10Effect(m_pD3D10Device);
+	pEffect->loadFromFile(name);
 
 	return pEffect;
 }
 
 IEffect * D3D10Renderer::loadEffectFromMemory(const char* mem)
 {
-	D3D10Effect *pEffect=new D3D10Effect();
-	pEffect->loadFromMemory(mem,m_pD3D10Device);
+	D3D10Effect *pEffect=new D3D10Effect(m_pD3D10Device);
+	pEffect->loadFromMemory(mem);
 
 	return pEffect;
 }
@@ -204,7 +221,7 @@ IBuffer * D3D10Renderer::createBuffer(unsigned int bufferSize, BUFFER_TYPE type,
 {
 	IBuffer *pBuffer=new D3D10Buffer(m_pD3D10Device);
 
-	pBuffer->createBuffer(bufferSize,VERTEX_BUFFER,DEFAULT,pData);
+	pBuffer->createBuffer(bufferSize,VERTEX_BUFFER,usage,pData);
 
 	return pBuffer;
 }
